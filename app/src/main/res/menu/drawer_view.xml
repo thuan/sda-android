@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/cadastro"
+            android:icon="@drawable/ic_action_settings"
+            android:title="@string/cadFilmes" />
+
+        <item
+            android:id="@+id/movies"
+            android:icon="@drawable/ic_dashboard"
+            android:title="@string/movies" />
+
+        <item
+            android:id="@+id/buscar"
+            android:icon="@drawable/ic_forum"
+            android:title="@string/buscar" />
+
+        <item
+            android:id="@+id/favoritos"
+            android:icon="@drawable/ic_discuss"
+            android:title= "@string/favoritos" />
+
+    </group>
+
+</menu>
