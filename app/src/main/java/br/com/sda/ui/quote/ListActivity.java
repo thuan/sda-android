@@ -71,8 +71,9 @@ public class ListActivity extends BaseActivity implements ArticleListFragment.Ca
                 if(response.isSuccess()){
                     List<Movie> movies = response.body();
                     for (Movie movie : movies) {
-                        Log.i("FILME: ", movie.getName() + " -- " + movie.getAuthor());
-                        Log.i("FILME:", "--------------------");
+                        Toast.makeText(getApplicationContext(), "FILME: " + movie.getName() + " -- "
+                                + movie.getAuthor(), Toast.LENGTH_LONG).show();
+                        LogUtil.logD("FILME: ", movie.getName() + " -- " + movie.getAuthor());
                     }
                 }
             }
