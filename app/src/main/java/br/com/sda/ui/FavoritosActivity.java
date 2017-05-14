@@ -2,12 +2,23 @@ package br.com.sda.ui;
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import java.util.List;
 
 import br.com.sda.R;
+import br.com.sda.api.MovieService;
+import br.com.sda.api.RetrofitClient;
+import br.com.sda.model.Movie;
 import br.com.sda.ui.base.BaseActivity;
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 public class FavoritosActivity extends BaseActivity {
 
@@ -16,6 +27,29 @@ public class FavoritosActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         setupToolbar();
+        setupFavoritos();
+    }
+
+    private void setupFavoritos() {
+        MovieService service = RetrofitClient.getClient().create(MovieService.class);
+
+        Call<List<Movie>> callFav = service.getFavorites();
+
+        callFav.enqueue(new Callback<List<Movie>>() {
+            @Override
+            public void onResponse(Response<List<Movie>> response, Retrofit retrofit) {
+                List<Movie> lstMovies = response.body();
+                for (Movie movie: lstMovies) {
+                    Toast.makeText(getApplicationContext(), "Filme: " + movie.getName() +
+                            " Favorito: " + movie.getFavorite(), Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void setupToolbar() {

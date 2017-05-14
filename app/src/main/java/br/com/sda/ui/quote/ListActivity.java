@@ -3,39 +3,27 @@ package br.com.sda.ui.quote;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.util.List;
 
 import br.com.sda.R;
 import br.com.sda.api.MovieService;
+import br.com.sda.api.RetrofitClient;
 import br.com.sda.dummy.DummyContent;
 import br.com.sda.model.Movie;
-import br.com.sda.model.MovieDeserializable;
 import br.com.sda.ui.base.BaseActivity;
 import br.com.sda.util.LogUtil;
 import retrofit.Call;
 import retrofit.Callback;
-import retrofit.GsonConverterFactory;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-/**
- * Lists all available quotes. This Activity supports a single pane (= smartphones) and a two pane mode (= large screens with >= 600dp width).
- *
- * Created by Andreas Schrade on 14.12.2015.
- */
 public class ListActivity extends BaseActivity implements ArticleListFragment.Callback {
 
-    //TODO - RODANDO LOCALMENTE = MODIFICAR O IP
-    private static final String BASE_URL = "http://192.168.25.2:8080";
 
     /**
      * Whether or not the activity is running on a device with a large screen
@@ -46,8 +34,8 @@ public class ListActivity extends BaseActivity implements ArticleListFragment.Ca
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
-
         setupToolbar();
+        setupRetrofit();
 
         if (isTwoPaneLayoutUsed()) {
             twoPaneMode = true;
@@ -58,22 +46,22 @@ public class ListActivity extends BaseActivity implements ArticleListFragment.Ca
         if (savedInstanceState == null && twoPaneMode) {
             setupDetailFragment();
         }
+    }
 
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
 
-        MovieService service = retrofit.create(MovieService.class);
+    private void setupRetrofit() {
+        MovieService service = RetrofitClient.getClient().create(MovieService.class);
 
-        Call<List<Movie>> filmes = service.getMovies();
+        Call<List<Movie>> callMovies = service.getMovies();
 
-        filmes.enqueue(new Callback<List<Movie>>() {
+        callMovies.enqueue(new Callback<List<Movie>>() {
             @Override
             public void onResponse(Response<List<Movie>> response, Retrofit retrofit) {
                 if(response.isSuccess()){
-                    List<Movie> movies = response.body();
-                    for (Movie movie : movies) {
+                    List<Movie> lstMovies = response.body();
+                    for (Movie movie : lstMovies) {
                         Toast.makeText(getApplicationContext(), "FILME: " + movie.getName() + " -- "
                                 + movie.getAuthor(), Toast.LENGTH_LONG).show();
-                        LogUtil.logD("FILME: ", movie.getName() + " -- " + movie.getAuthor());
                     }
                 }
             }
@@ -81,11 +69,9 @@ public class ListActivity extends BaseActivity implements ArticleListFragment.Ca
             @Override
             public void onFailure(Throwable t) {
                 Toast.makeText(getApplicationContext(), "Erro " + t.getMessage(), Toast.LENGTH_LONG).show();
-                Log.i("Erro:", t.getMessage());
             }
         });
     }
-
     /**
      * Called when an item has been selected
      *

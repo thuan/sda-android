@@ -9,22 +9,16 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import java.util.List;
-
 import br.com.sda.R;
 import br.com.sda.api.MovieService;
+import br.com.sda.api.RetrofitClient;
 import br.com.sda.model.Movie;
-import br.com.sda.model.MovieDeserializable;
 import br.com.sda.ui.base.BaseActivity;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Call;
 import retrofit.Callback;
-import retrofit.GsonConverterFactory;
 import retrofit.Response;
 import retrofit.Retrofit;
 
@@ -32,8 +26,6 @@ public class BuscaActivity extends BaseActivity {
 
     @Bind(R.id.buscaFilme)
     EditText movieEt;
-
-    private static final String BASE_URL = "http://192.168.25.2:8080";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +37,7 @@ public class BuscaActivity extends BaseActivity {
 
     @OnClick(R.id.fabBusca)
     public void onFabClicked(final View view) {
-
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create()).build();
-
-        MovieService service = retrofit.create(MovieService.class);
+        MovieService service = RetrofitClient.getClient().create(MovieService.class);
 
         Movie movie = new Movie();
 

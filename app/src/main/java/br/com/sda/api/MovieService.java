@@ -18,6 +18,9 @@ public interface MovieService {
     @GET("/movies/{name}")
     Call<Movie> getMovieByName(@Path("name") String name);
 
+    @GET("/movies/favs")
+    Call<List<Movie>> getFavorites();
+
     @POST("/movies")
     Call<Movie> addMovie(@Body Movie movie);
 }
